@@ -36,7 +36,7 @@ class Hex():
                     positions.append((y, x))
         return positions
 
-    def DoMove(self, move):  # TODO
+    def DoMove(self, move):
         """ Update a state by carrying out the given move.
             Must update playerJustMoved.
         """
@@ -57,6 +57,8 @@ class Hex():
         if won:
             if player == playerjm:
                 return 1.0
+            else:
+                return 0.0
         else:
             return 0.0 
 

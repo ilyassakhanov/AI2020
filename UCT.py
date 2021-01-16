@@ -17,6 +17,7 @@
 
 from math import *
 import random
+import datetime
 import hexgame
 
 class GameState:
@@ -354,7 +355,6 @@ def UCT(rootstate, itermax, verbose = False):
 
         # Backpropagate
         while node != None: # backpropagate from the expanded node and work back to the root node
-            print(state.GetResult(node.playerJustMoved))
             node.Update(state.GetResult(node.playerJustMoved)) # state is terminal. Update node with result from POV of node.playerJustMoved
             node = node.parentNode
 
@@ -372,6 +372,7 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     #state = NimState(15) # uncomment to play Nim with the given number of starting chips
     state = hexgame.Hex(11)
+    start_time = datetime.datetime.now()
     while (state.GetMoves() != []):
         if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
@@ -379,6 +380,8 @@ def UCTPlayGame():
             m = UCT(rootstate = state, itermax = 100, verbose = False)
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
+    training_time = datetime.datetime.now() - start_time
+    print(training_time)
     if state.GetResult(state.playerJustMoved) == 1.0:
         print("Player " + str(state.playerJustMoved) + " wins!")
     elif state.GetResult(state.playerJustMoved) == 0.0:
