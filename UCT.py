@@ -384,7 +384,7 @@ def UCTPlayGame():
             m = UCT(rootstate = state, itermax = 100, verbose = False)
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
-        # model.train(state.getTrainingHistory())
+        model.train(state.getTrainingHistory())
     model.save("/home/ilyassakhanov/AI2020/AI2020")
     training_time = datetime.datetime.now() - start_time
     print(training_time)
