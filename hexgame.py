@@ -8,6 +8,8 @@ Author: Sylvain B.
 Version: 1.0
 """
 
+import copy
+
 EMPTY, BLUE, RED = 0, 1, 2
 
 
@@ -27,6 +29,8 @@ class Hex():
         [self.grid, self.winner, self.current, self.edges] = [None] * 4
         self.reset()
         self.playerJustMoved = 2
+        self.boardHistory = []
+        self.trainingHistory = []
 
     def GetMoves(self):
         positions = []
@@ -42,6 +46,7 @@ class Hex():
         """
         self.playerJustMoved = 3 - self.playerJustMoved
         self.play(move[0], move[1])
+        self.boardHistory.append(copy.deepcopy(self.grid))
 
     def Clone(self):
         """ Create a deep clone of this game state.
@@ -132,6 +137,9 @@ class Hex():
             self.edges[self._top()].append(self._2d_2_1d(0, j))
             self.edges[self._2d_2_1d(self.size - 1, j)].append(self._bottom())
 
+    def getBoardHistory(self):
+        return self.boardHistory        
+
     def play(self, i, j):
         """
         Plays a move: puts a piece of the current player
@@ -150,7 +158,13 @@ class Hex():
         if self._check_winner():
             self.winner = self.current
         self.current = BLUE if self.current == RED else RED
+
+        for historyItem in self.getBoardHistory():
+            self.trainingHistory.append((self.winner, copy.deepcopy(historyItem))) # winner?
         return self.winner
+
+    def getTrainingHistory(self):
+        return self.trainingHistory
 
     def _check_winner(self):
         if self.current == BLUE:

@@ -19,6 +19,7 @@ from math import *
 import random
 import datetime
 import hexgame
+from model import ConnectFourModel
 
 class GameState:
     """ A state of the game, i.e. the game board. These are the only functions which are
@@ -372,12 +373,14 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     #state = NimState(15) # uncomment to play Nim with the given number of starting chips
     state = hexgame.Hex(11)
+    model = ConnectFourModel(121, 2, 50, 100)
     start_time = datetime.datetime.now()
     while (state.GetMoves() != []):
         if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
         else:
             m = UCT(rootstate = state, itermax = 100, verbose = False)
+        model.train(state.getTrainingHistory())
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
     training_time = datetime.datetime.now() - start_time
