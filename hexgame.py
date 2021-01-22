@@ -46,7 +46,6 @@ class Hex():
         """
         self.playerJustMoved = 3 - self.playerJustMoved
         self.play(move[0], move[1])
-        self.boardHistory.append(copy.deepcopy(self.grid))
 
     def Clone(self):
         """ Create a deep clone of this game state.
@@ -157,11 +156,20 @@ class Hex():
         self.grid[i][j] = self.current
         if self._check_winner():
             self.winner = self.current
-        self.current = BLUE if self.current == RED else RED
-
+        
+        self.boardHistory.append(copy.deepcopy(self.grid))
         for historyItem in self.getBoardHistory():
-            self.trainingHistory.append((self.winner, copy.deepcopy(historyItem))) # winner?
+            if self._check_winner():
+                self.trainingHistory.append((self.winner, copy.deepcopy(historyItem))) # winner? add reset for trainingHistory
+            else: 
+                self.trainingHistory.append((0, copy.deepcopy(historyItem)))
+        self.current = BLUE if self.current == RED else RED
+    
         return self.winner
+
+    def resetHistory(self):
+        self.boardHistory = []
+        self.trainingHistory = []
 
     def getTrainingHistory(self):
         return self.trainingHistory
