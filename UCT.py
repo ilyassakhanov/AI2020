@@ -378,10 +378,12 @@ def UCTPlayGame():
     model = ConnectFourModel(121, 3, 50, 1)
     start_time = datetime.datetime.now()
     while (state.GetMoves() != []):
+        b4_move = datetime.datetime.now()
         if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
         else:
             m = UCT(rootstate = state, itermax = 100, verbose = False)
+        print("UCTPlayGame: "+str(datetime.datetime.now() - b4_move))
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
         model.train(state.getTrainingHistory())
