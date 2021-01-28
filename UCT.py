@@ -19,6 +19,7 @@ from math import *
 import random
 import datetime
 import hexgame
+from model import ConnectFourModel
 
 class GameState:
     """ A state of the game, i.e. the game board. These are the only functions which are
@@ -359,8 +360,10 @@ def UCT(rootstate, itermax, verbose = False):
             node = node.parentNode
 
     # Output some information about the tree - can be omitted
-    if (verbose): print(rootnode.TreeToString(0))
-    else: print(rootnode.ChildrenToString())
+    # if (verbose): 
+    #     print(rootnode.TreeToString(0))
+    # else: 
+    #     print(rootnode.ChildrenToString())
 
     return sorted(rootnode.childNodes, key = lambda c: c.visits)[-1].move # return the move that was most visited
                 
@@ -372,14 +375,19 @@ def UCTPlayGame():
     #state = OXOState() # uncomment to play OXO
     #state = NimState(15) # uncomment to play Nim with the given number of starting chips
     state = hexgame.Hex(11)
+    model = ConnectFourModel(121, 3, 50, 1)
     start_time = datetime.datetime.now()
     while (state.GetMoves() != []):
+        b4_move = datetime.datetime.now()
         if state.playerJustMoved == 1:
             m = UCT(rootstate = state, itermax = 1000, verbose = False) # play with values for itermax and verbose = True
         else:
             m = UCT(rootstate = state, itermax = 100, verbose = False)
+        print("UCTPlayGame: "+str(datetime.datetime.now() - b4_move))
         print("Best Move: " + str(m) + "\n")
         state.DoMove(m)
+        model.train(state.getTrainingHistory())
+    model.save("/home/ilyassakhanov/AI2020/AI2020")
     training_time = datetime.datetime.now() - start_time
     print(training_time)
     if state.GetResult(state.playerJustMoved) == 1.0:
